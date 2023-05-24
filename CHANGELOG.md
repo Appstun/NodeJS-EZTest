@@ -16,3 +16,11 @@ All important changes to the extension "NodeJS-EZTest" are documented in this do
 ### Changed
 
 - Small text errors in CHANGELOG.md and README.md
+
+<br>
+
+## [0.1.3] - 2023-05-24
+
+### Added
+
+- License
