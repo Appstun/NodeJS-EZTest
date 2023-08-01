@@ -24,3 +24,11 @@ All important changes to the extension "NodeJS-EZTest" are documented in this do
 ### Added
 
 - License
+
+<br>
+
+## [0.1.4] - 2023-08-01
+
+### Added
+
+- In the command && was changed to |.

@@ -13,6 +13,9 @@ let statusBarItemTexts: Array<string> = [
   "$(stop) stop Testing",
 ];
 
+let tsCommand = "tsc | node .";
+let jsCommand = "node .";
+
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate({ subscriptions }: vscode.ExtensionContext) {
@@ -76,7 +79,7 @@ function runCode() {
       }
     });
 
-    const command = tsFiles.length > 0 ? "tsc && node ." : "node .";
+    const command = tsFiles.length > 0 ? tsCommand : jsCommand;
 
     currentTerminal = vscode.window.createTerminal({
       name: "Code Terminal",
