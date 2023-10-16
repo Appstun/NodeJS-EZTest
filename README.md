@@ -23,10 +23,10 @@ NodeJS-EZTest is a VS Code extension that simplifies the testing of Node.js proj
 ## Installation
 
 1. Open VS Code. <br>
-2. go to the extension menu (left sidebar) or use the key combination 'Ctrl+Shift+X'. <br>
-3. enter "NodeJS-EZTest" in the search field. <br>
+2. Go to the extension menu (left sidebar) or use the key combination 'Ctrl+Shift+X'. <br>
+3. Enter "NodeJS-EZTest" in the search field. <br>
 4. Click on "Install" to install the extension. <br>
-5. restart VS Code to activate the extension. <br>
+5. Restart VS Code to activate the extension. <br>
 
 <br><br><br>
 
