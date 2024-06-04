@@ -1,6 +1,6 @@
 # Change Log - NodeJS-EZTest
 
-All important changes to the extension "NodeJS-EZTest" are documented in this document.
+All _important_ changes to the extension "NodeJS-EZTest" are documented in this document.
 
 ## [0.1.0] - 2023-05-21
 
@@ -29,6 +29,16 @@ All important changes to the extension "NodeJS-EZTest" are documented in this do
 
 ## [0.1.4] - 2023-08-01
 
-### Added
+### Changed
 
 - In the command && was changed to |.
+
+<br>
+
+## [0.1.5] - 2024-06-04
+
+### Changed
+
+- Commands are now independent of command prompt host (example: Powershell).
+- If typescript files are present, it will now wait until the `tsc` command is finished before starting the code.
+- Updated README.md

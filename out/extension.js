@@ -8,13 +8,13 @@ const path = require("path");
 const vscode = require("vscode");
 let currentTerminal = undefined;
 let statusBarItem;
-let cmdName = "nodejs-eztest.eztest";
-let statusBarItemTexts = [
+const cmdName = "nodejs-eztest.eztest";
+const statusBarItemTexts = [
     "$(terminal) start Testing",
     "$(stop) stop Testing",
 ];
-let tsCommand = "tsc | node .";
-let jsCommand = "node .";
+const tsCommand = "tsc";
+const jsCommand = "node .";
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 function activate({ subscriptions }) {
@@ -54,15 +54,17 @@ function runCode() {
                 tsFiles.push(uri);
             }
         });
-        const command = tsFiles.length > 0 ? tsCommand : jsCommand;
         currentTerminal = vscode.window.createTerminal({
             name: "Code Terminal",
             cwd: workspaceFolder.uri.fsPath,
         });
         currentTerminal.show();
-        currentTerminal.sendText(command);
+        if (tsFiles.length > 0) {
+            currentTerminal.sendText(tsCommand);
+        }
+        currentTerminal.sendText(jsCommand);
         updateStatusBarItem();
-        vscode.window.showInformationMessage("Terminal and code launched");
+        //vscode.window.showInformationMessage("Terminal and code launched");
     });
 }
 function deactivate() {
