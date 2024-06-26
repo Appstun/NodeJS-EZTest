@@ -45,6 +45,6 @@ All _important_ changes to the extension "NodeJS-EZTest" are documented in this 
 
 ## [0.2.0] - 2024-06-26
 
-### Changed
+### Added
 
 - Added second statusbar button for restarting the terminal (when active) and compile Typescript file (when exists).
