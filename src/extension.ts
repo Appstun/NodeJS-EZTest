@@ -5,40 +5,88 @@ import * as path from "path";
 import * as vscode from "vscode";
 
 let currentTerminal: vscode.Terminal | undefined = undefined;
-let statusBarItem: vscode.StatusBarItem;
+let statusBarItems: vscode.StatusBarItem[] = [];
+let statusbarPrioirty = 1000;
+let filesCheck: {
+  worspaceFolder: boolean;
+  javascript: boolean;
+  typescript: boolean;
+  tsconfig: boolean;
+  nodeModules: boolean;
+};
 
-const cmdName: string = "nodejs-eztest.eztest";
-const statusBarItemTexts: Array<string> = [
+const cmdNames: string[] = [
+  "nodejs-eztest.start_stop",
+  "nodejs-eztest.tsc_restart",
+];
+const statusBarItemTexts: string[] = [
   "$(terminal) start Testing",
   "$(stop) stop Testing",
+  "$(symbol-keyword) compile TS",
+  "$(refresh) restart Testing",
 ];
 const tsCommand = "tsc";
 const jsCommand = "node .";
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
-export function activate({ subscriptions }: vscode.ExtensionContext) {
-  statusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Left,
-    4269
+let buttonDisabled = false;
+function disableButtons(miliseconds: number) {
+  buttonDisabled = true;
+
+  let time = miliseconds;
+  let interval = setInterval(() => {
+    if (time <= 0 || !buttonDisabled) {
+      clearInterval(interval);
+      buttonDisabled = false;
+      return;
+    }
+    time--;
+  }, 1);
+}
+
+async function startFileCheck() {
+  filesCheck = await checkFiles();
+  setInterval(startFileCheck, 60000);
+}
+
+export async function activate({ subscriptions }: vscode.ExtensionContext) {
+  startFileCheck();
+  filesCheck = await checkFiles();
+
+  statusBarItems.push(
+    vscode.window.createStatusBarItem(
+      vscode.StatusBarAlignment.Left,
+      statusbarPrioirty
+    )
   );
-  statusBarItem.command = cmdName;
-
-  let disposable = vscode.commands.registerCommand(cmdName, () => runCode());
-
-  statusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Left,
-    100
+  statusBarItems.push(
+    vscode.window.createStatusBarItem(
+      vscode.StatusBarAlignment.Left,
+      statusbarPrioirty - statusBarItems.length
+    )
   );
-  statusBarItem.command = cmdName;
 
-  subscriptions.push(statusBarItem);
-  subscriptions.push(disposable);
+  statusBarItems[0].command = cmdNames[0];
+  statusBarItems[1].command = cmdNames[1];
+
+  subscriptions.push(
+    vscode.commands.registerCommand(cmdNames[0], () => {
+      if (!buttonDisabled) {
+        toggleTerminal();
+      }
+    })
+  );
+  subscriptions.push(
+    vscode.commands.registerCommand(cmdNames[1], () => {
+      if (!buttonDisabled) {
+        currentTerminal ? restartTerminal() : compileTS();
+      }
+    })
+  );
 
   subscriptions.push(
     vscode.window.onDidCloseTerminal((event) => {
       if (event.processId === currentTerminal?.processId) {
-        stopCode();
+        stopTerminal();
       }
     })
   );
@@ -52,9 +100,66 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
   updateStatusBarItem();
 }
 
-function runCode() {
-  if (currentTerminal && !currentTerminal.exitStatus) {
-    stopCode();
+export function deactivate() {
+  stopTerminal();
+}
+
+function compileTS() {
+  if (!currentTerminal) {
+    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+    if (!workspaceFolder) {
+      vscode.window.showErrorMessage("No workspace folder found.");
+      return;
+    }
+    buttonDisabled = true;
+
+    let split = statusBarItemTexts[2].split(" ");
+    vscode.window.showInformationMessage("Compiling Typescript files...");
+    split = split.slice(1);
+    statusBarItems[1].text = `$(loading~spin) ${split.join(" ")}`;
+    let terminal = vscode.window.createTerminal({
+      name: "TS Compiler",
+      cwd: workspaceFolder.uri.fsPath,
+      isTransient: false,
+      hideFromUser: true,
+    });
+
+    terminal.sendText(tsCommand);
+    terminal.sendText("exit");
+
+    let interval = setInterval(() => {
+      if (terminal.exitStatus !== undefined) {
+        clearInterval(interval);
+
+        vscode.window.showInformationMessage("Typescript compilation finished");
+        terminal.dispose();
+
+        buttonDisabled = false;
+        updateStatusBarItem();
+      }
+    }, 1000);
+  }
+}
+
+function toggleTerminal() {
+  disableButtons(100);
+  if (currentTerminal) {
+    stopTerminal();
+  } else {
+    startTerminal();
+  }
+}
+
+function restartTerminal() {
+  disableButtons(100);
+  if (currentTerminal) {
+    stopTerminal(false);
+    startTerminal();
+  }
+}
+
+function startTerminal(updateButtons = true) {
+  if (currentTerminal) {
     return;
   }
 
@@ -81,6 +186,7 @@ function runCode() {
     currentTerminal = vscode.window.createTerminal({
       name: "Code Terminal",
       cwd: workspaceFolder.uri.fsPath,
+      isTransient: false,
     });
 
     currentTerminal.show();
@@ -89,73 +195,114 @@ function runCode() {
     }
     currentTerminal.sendText(jsCommand);
 
-    updateStatusBarItem();
+    if (updateButtons) {
+      updateStatusBarItem();
+    }
     //vscode.window.showInformationMessage("Terminal and code launched");
   });
 }
-export function deactivate() {
-  stopCode();
-}
 
-function stopCode() {
-  if (currentTerminal) {
-    currentTerminal.dispose();
-    currentTerminal = undefined;
+function stopTerminal(updateButtons = true) {
+  if (!currentTerminal) {
+    return;
+  }
 
+  currentTerminal.dispose();
+
+  currentTerminal = undefined;
+
+  if (updateButtons) {
     updateStatusBarItem();
     vscode.window.showInformationMessage("Terminal and code stopped");
   }
 }
 
-function updateStatusBarItem() {
+async function updateStatusBarItem() {
   if (currentTerminal) {
-    statusBarItem.text = statusBarItemTexts[1];
+    statusBarItems[0].text = statusBarItemTexts[1];
+    statusBarItems[1].text = statusBarItemTexts[3];
   } else {
-    statusBarItem.text = statusBarItemTexts[0];
+    statusBarItems[0].text = statusBarItemTexts[0];
+    statusBarItems[1].text = statusBarItemTexts[2];
   }
 
-  updateStatusBarVisibility();
+  if (!filesCheck.worspaceFolder) {
+    statusBarItems[0].hide();
+    statusBarItems[1].hide();
+    return;
+  }
+
+  if (
+    filesCheck.nodeModules &&
+    (filesCheck.javascript || (filesCheck.typescript && filesCheck.tsconfig))
+  ) {
+    statusBarItems[0].show();
+  } else {
+    statusBarItems[0].hide();
+  }
+
+  if (filesCheck.typescript && filesCheck.tsconfig) {
+    statusBarItems[1].show();
+  } else {
+    statusBarItems[1].hide();
+  }
+
+  if (currentTerminal) {
+    statusBarItems[1].show();
+  }
 }
 
-function updateStatusBarVisibility() {
+async function checkFiles(): Promise<{
+  worspaceFolder: boolean;
+  javascript: boolean;
+  typescript: boolean;
+  tsconfig: boolean;
+  nodeModules: boolean;
+}> {
   const activeWorkspaceFolder = vscode.workspace.workspaceFolders?.[0];
   if (!activeWorkspaceFolder) {
-    statusBarItem.hide();
-    return;
+    return {
+      worspaceFolder: true,
+      javascript: false,
+      typescript: false,
+      tsconfig: false,
+      nodeModules: false,
+    };
   }
 
   const nodeModulesPath = path.join(
     activeWorkspaceFolder.uri.fsPath,
     "node_modules"
   );
-  const hasNodeModules = fs.existsSync(nodeModulesPath);
 
-  const filePattern = new vscode.RelativePattern(
-    activeWorkspaceFolder,
-    "**/*.{js,ts}"
-  );
-  const tsConfigPattern = new vscode.RelativePattern(
-    activeWorkspaceFolder,
-    "tsconfig.json"
-  );
-
-  const hasJsOrTsFiles = vscode.workspace
-    .findFiles(filePattern, "**/node_modules/**", 1)
+  const hasJsFiles = await vscode.workspace
+    .findFiles(
+      new vscode.RelativePattern(activeWorkspaceFolder, "**/*.js"),
+      "**/node_modules/**",
+      1
+    )
+    .then((files) => files.length > 0);
+  const hasTsFiles = await vscode.workspace
+    .findFiles(
+      new vscode.RelativePattern(activeWorkspaceFolder, "**/*.ts"),
+      "**/node_modules/**",
+      1
+    )
     .then((files) => files.length > 0);
 
-  const hasTsConfig = vscode.workspace
-    .findFiles(tsConfigPattern, "**/node_modules/**", 1)
+  const hasTsconfig = await vscode.workspace
+    .findFiles(
+      new vscode.RelativePattern(activeWorkspaceFolder, "tsconfig.json"),
+      "**/node_modules/**",
+      1
+    )
     .then((files) => files.length > 0);
 
-  Promise.all([hasNodeModules, hasJsOrTsFiles, hasTsConfig]).then(
-    ([nodeModules, jsOrTsFiles, tsConfig]) => {
-      //vscode.window.showInformationMessage(`${nodeModules} && (${jsOrTsFiles} || ${tsConfig})`);
-
-      if (nodeModules && (jsOrTsFiles || tsConfig)) {
-        statusBarItem.show();
-      } else {
-        statusBarItem.hide();
-      }
-    }
-  );
+  return {
+    worspaceFolder: true,
+    javascript: hasJsFiles,
+    typescript: hasTsFiles,
+    tsconfig: hasTsconfig,
+    nodeModules: fs.existsSync(nodeModulesPath),
+  };
 }

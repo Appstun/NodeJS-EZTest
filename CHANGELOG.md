@@ -42,3 +42,9 @@ All _important_ changes to the extension "NodeJS-EZTest" are documented in this 
 - Commands are now independent of command prompt host (example: Powershell).
 - If typescript files are present, it will now wait until the `tsc` command is finished before starting the code.
 - Updated README.md
+
+## [0.2.0] - 2024-06-26
+
+### Changed
+
+- Added second statusbar button for restarting the terminal (when active) and compile Typescript file (when exists).
