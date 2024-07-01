@@ -53,8 +53,8 @@ All _important_ changes to the extension "NodeJS-EZTest" are documented in this 
 
 <br>
 
-## [0.2.1] - 2024-06-26
+## [0.2.1] - 2024-07-01
 
 ### Changed
 
-- Fixed stupid mistake with setInterval .... *sigh*
+- Fixed stupid mistake with setInterval .... _sigh_

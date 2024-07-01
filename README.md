@@ -46,4 +46,4 @@ The process is displayed in the console. <br>
 <br><br>
 
 [Appstun](https://github.com/appstun) - Main Developer
-###### NodeJS-EZTest 0.2.0
+###### NodeJS-EZTest 0.2.1
