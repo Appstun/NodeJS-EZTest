@@ -1,8 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deactivate = exports.activate = void 0;
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 const fs = require("fs");
 const path = require("path");
 const vscode = require("vscode");
@@ -37,11 +35,12 @@ function disableButtons(miliseconds) {
 }
 async function startFileCheck() {
     filesCheck = await checkFiles();
-    setInterval(startFileCheck, 60000);
+    +setTimeout(async () => {
+        filesCheck = await checkFiles();
+    }, 60000);
 }
 async function activate({ subscriptions }) {
     startFileCheck();
-    filesCheck = await checkFiles();
     statusBarItems.push(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, statusbarPrioirty));
     statusBarItems.push(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, statusbarPrioirty - statusBarItems.length));
     statusBarItems[0].command = cmdNames[0];
@@ -90,6 +89,7 @@ function compileTS() {
         });
         terminal.sendText(tsCommand);
         terminal.sendText("exit");
+        let quitTimer = 60;
         let interval = setInterval(() => {
             if (terminal.exitStatus !== undefined) {
                 clearInterval(interval);
@@ -97,6 +97,16 @@ function compileTS() {
                 terminal.dispose();
                 buttonDisabled = false;
                 updateStatusBarItem();
+            }
+            if (quitTimer <= 0) {
+                clearInterval(interval);
+                vscode.window.showWarningMessage("Typescript compilation took too long... Aborted!");
+                terminal.dispose();
+                buttonDisabled = false;
+                updateStatusBarItem();
+            }
+            else {
+                quitTimer--;
             }
         }, 1000);
     }
