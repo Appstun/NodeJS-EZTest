@@ -58,3 +58,14 @@ All _important_ changes to the extension "NodeJS-EZTest" are documented in this 
 ### Changed
 
 - Fixed stupid mistake with setInterval .... _sigh_
+
+## [0.3.0] - 2025-01-14
+
+### Changed
+
+- Fixed the buttons not loading when vs code opens
+- Typescript compilation function
+
+### Added
+
+- Typescript error page for failed compilation. _It's not pretty, but it works._
