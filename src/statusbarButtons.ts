@@ -11,6 +11,16 @@ export namespace StatusbarButtons {
   }
 
   export async function updateStatusbar(disableButtons?: number | boolean) {
+    //Disable buttons for a certain amount of time or enable them
+    if (disableButtons) {
+      if (typeof disableButtons === "number") {
+        disableButtonsMs(disableButtons);
+      } else {
+        disableButtonsMs(100);
+      }
+    } else if (disableButtons === false) {
+      enableButtons();
+    }
 
     //Update buttons texts
     if (VisibleTerminal.currentTerminal) {
