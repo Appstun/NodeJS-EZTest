@@ -65,7 +65,14 @@ All _important_ changes to the extension "NodeJS-EZTest" are documented in this 
 
 - Fixed the buttons not loading when vs code opens
 - Typescript compilation function
+- upgraded vs code version
 
 ### Added
 
 - Typescript error page for failed compilation. _It's not pretty, but it works._
+
+## [0.3.1] - 2025-01-14
+
+### Changed
+
+-downgraded vs code version
