@@ -16,24 +16,26 @@ NodeJS-EZTest is a VS Code extension that simplifies the testing of Node.js proj
 ## Usage
 
 #### To start testing:
+
 1. Open your Node.js project in VS Code. <br>
 2. A "start Testing" button is displayed in the status bar. <br>
 3. Click on the button to open a new console and execute the code <br>
-The process is displayed in the console. <br>
-5. Click on the button again to stop the code and close the terminal. <br>
+   The process is displayed in the console. <br>
+4. Click on the button again to stop the code and close the terminal. <br>
    <br>
 
 - Press the "restart Testing" button to reopen the terminal.
 - epic pro tip: Use `Ctrl+R` or `Cmd+R` on Mac to terminate the currently running command. After that you can use the terminal as usual.
 
 #### To compile Typescript files
+
 1. Open your Node.js project with Typescript files in VS Code. <br>
 2. A "compile TS" button is displayed in the status bar. <br>
 3. Click on the button to compile the Typescript files to Javascript files. <br>
 4. Wait a bit and stare at the spinning loading symbol.
 5. When the symbol of the button has changed, the compilation is complete.
 
-- The "Compile TS" button is only displayed if typescript files and the `tsconfig.json` file are present. 
+- The "Compile TS" button is only displayed if typescript files and the `tsconfig.json` file are present.
 
 ## Installation
 
@@ -45,5 +47,4 @@ The process is displayed in the console. <br>
 
 <br><br>
 
-[Appstun](https://github.com/appstun) - Main Developer
-###### NodeJS-EZTest 0.2.1
+[Appstun](https://github.com/appstun) - Developer
