@@ -75,4 +75,11 @@ All _important_ changes to the extension "NodeJS-EZTest" are documented in this 
 
 ### Changed
 
--downgraded vs code version
+- downgraded vs code version
+
+## [1.0.0] - 2025-01-20
+
+### Changed
+
+- Updated README.md
+- Updated Icon
