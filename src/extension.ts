@@ -4,6 +4,7 @@ import { VisibleTerminal } from "./visibleTerminal";
 import { StatusbarButtons } from "./statusbarButtons";
 import { Config } from "./config";
 import { Compiler } from "./compile";
+import { JsonDB } from "./jsonManager";
 
 export namespace Index {
   export let statusBarItems: vscode.StatusBarItem[] = [];

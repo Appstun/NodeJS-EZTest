@@ -11,7 +11,7 @@ NodeJS-EZTest is a VS Code extension that simplifies the testing of Node.js proj
 - Convenient starting and stopping of code.
 - Compiling TypeScript files without executing the code.
 - Error document when a compilation fails.
-  <br><br>
+    <br><br>
 - For the button to be displayed, there must be the folder `node_modules` and TypeScript/JavaScript files in the current workspace.
 
 ## Usage
@@ -21,9 +21,9 @@ NodeJS-EZTest is a VS Code extension that simplifies the testing of Node.js proj
 1. Open your Node.js project in VS Code. <br>
 2. A "start Testing" button is displayed in the status bar. <br>
 3. Click on the button to open a new console and execute the code <br>
-   The process is displayed in the console. <br>
+      The process is displayed in the console. <br>
 4. Click on the button again to stop the code and close the terminal. <br>
-   <br>
+      <br>
 
 - Press the "restart Testing" button to reopen and restart the terminal.
 
@@ -39,8 +39,23 @@ NodeJS-EZTest is a VS Code extension that simplifies the testing of Node.js proj
 
 <br>
 <br>
+
 - The "Compile TS" button is only displayed if TypeScript files and the `tsconfig.json` file are present, and no test is currently running.
 
 <br><br>
+
+# Configuration
+
+You can configure with which runtime you code gets run.
+
+Add this into the json root in `{workspace path}/.vscode/launch.json`:
+```json
+"eztest": {
+   "indexFile": ".",          // Path to your code index file. (like './out/index.js')
+   "runtimeCommand": "node",  // Command of a Javascript runtime (like 'node' or 'bun')
+   "compileCommand": "tsc"    // Command that gets executed before the runtime gets run command
+}
+```
+> By the way, if the file is not present, the extension will create automatically when you press the "start Testing" button.
 
 [Appstun](https://github.com/appstun) - Developer

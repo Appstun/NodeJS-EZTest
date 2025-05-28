@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { StatusbarButtons } from "./statusbarButtons";
-import { Config } from "./config";
+import { Config, LaunchConfig } from "./config";
 import { FileManager } from "./fileManager";
 
 export namespace VisibleTerminal {
@@ -27,7 +27,7 @@ export namespace VisibleTerminal {
     }
   }
 
-  export function startTerminal(updateButtons = true) {
+  export async function startTerminal(updateButtons = true) {
     if (currentTerminal) {
       return;
     }
@@ -43,12 +43,13 @@ export namespace VisibleTerminal {
       isTransient: false,
     });
     currentTerminal.show();
-    
+
     //execute tsc if ts files are present
+    let opts = await LaunchConfig.getOptions();
     if (FileManager.filesCheck.typescript && FileManager.filesCheck.tsconfig) {
-      currentTerminal.sendText(Config.terminalCommands.compileTs);
+      currentTerminal.sendText(opts.compileCommand, true);
     }
-    currentTerminal.sendText(Config.terminalCommands.startNode);
+    currentTerminal.sendText(`${opts.runtimeCommand} "${opts.indexFile}"`, true);
 
     if (updateButtons) {
       StatusbarButtons.updateStatusbar();
