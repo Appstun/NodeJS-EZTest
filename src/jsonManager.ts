@@ -6,20 +6,20 @@ import { FileManager } from "./fileManager";
 
 export namespace JsonDB {
   export let createValueOnGetWhenNotExists: Boolean = false;
-  let files = [
-    path.join(FileManager.getWorkspaceFolderPath() || ".", `/.vscode/launch`),
-    //"<Pfad der Datei (OHNE Dateinamenerweiterung (z.B. ".json"))>",
-  ];
-  for (let file of files) checkJsonFile(`${file}.json`);
+  let files = [path.join(FileManager.getWorkspaceFolderPath() || ".", `/.vscode/eztest`)];
+  for (let file of files) {
+    checkJsonFile(`${file}.json`);
+  }
 
   export const dataBases = {
-    lauConf: new NodeJsonDB(new Config(files[0], true, false, "/")),
-    //<Name>: new NodeJsonDB(new Config(files[<Nummer>], true, false, "/")),
+    lauConf: new NodeJsonDB(new Config(files[0], false, false, "/")),
   } as const;
 
   export async function valueExists(database: (typeof dataBases)[keyof typeof dataBases], path: string) {
     path = correctPath(path);
-    if (await database.exists(path)) return true;
+    if (await database.exists(path)) {
+      return true;
+    }
     return false;
   }
 
@@ -28,6 +28,7 @@ export namespace JsonDB {
     path = correctPath(path);
     try {
       await database.push(path, value);
+      await database.save(true);
       completed = true;
     } catch (error) {
       completed = false;
@@ -51,14 +52,18 @@ export namespace JsonDB {
     let value = def;
     path = correctPath(path);
     if (!(await database.exists(path))) {
-      if (createValueOnGetWhenNotExists) await database.push(path, def);
+      if (createValueOnGetWhenNotExists) {
+        await database.push(path, def);
+      }
       return def;
     }
 
     try {
       value = await database.getData(path);
     } catch (error) {
-      if (createValueOnGetWhenNotExists) await database.push(path, def);
+      if (createValueOnGetWhenNotExists) {
+        await database.push(path, def);
+      }
       value = def;
     }
     return value;
@@ -67,7 +72,9 @@ export namespace JsonDB {
   export async function getKeys(database: (typeof dataBases)[keyof typeof dataBases], path: string) {
     let value: string[] = [];
     path = correctPath(path);
-    if (!(await database.exists(path))) return [];
+    if (!(await database.exists(path))) {
+      return [];
+    }
     try {
       value = Object.keys(await database.getData(path));
     } catch (error) {
@@ -81,14 +88,17 @@ export class Json {
   private jsonObject;
 
   constructor(json: string | object | null = null) {
-    if (json == null) this.jsonObject = {};
-    else if (typeof json == "string") {
+    if (json === null) {
+      this.jsonObject = {};
+    } else if (typeof json === "string") {
       try {
         this.jsonObject = JSON.parse(json);
       } catch (error) {
         throw new Error("Invalid JSON string");
       }
-    } else this.jsonObject = json;
+    } else {
+      this.jsonObject = json;
+    }
   }
 
   private getPathSegments(path: string): string[] {
@@ -101,7 +111,9 @@ export class Json {
 
     for (let i = 0; i < segments.length - 1; i++) {
       const segment = segments[i];
-      if (!(segment in current)) current[segment] = {};
+      if (!(segment in current)) {
+        current[segment] = {};
+      }
       current = current[segment];
     }
     current[segments[segments.length - 1]] = value;
@@ -112,7 +124,9 @@ export class Json {
     let current = this.jsonObject;
 
     for (let segment of segments) {
-      if (!(segment in current)) return def;
+      if (!(segment in current)) {
+        return def;
+      }
       current = current[segment];
     }
     return current;
@@ -120,12 +134,14 @@ export class Json {
 
   getKeys(path: string): string[] {
     const value = this.getValue(path, null);
-    if (value && typeof value == "object" && !Array.isArray(value)) return Object.keys(value);
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      return Object.keys(value);
+    }
     return [];
   }
 
   valueExists(path: string): boolean {
-    return this.getValue(path, undefined) != undefined;
+    return this.getValue(path, undefined) !== undefined;
   }
 
   deleteValue(path: string) {
@@ -134,7 +150,9 @@ export class Json {
 
     for (let i = 0; i < segments.length - 1; i++) {
       const segment = segments[i];
-      if (!(segment in current)) return;
+      if (!(segment in current)) {
+        return;
+      }
       current = current[segment];
     }
 
@@ -152,13 +170,21 @@ export class Json {
 
 function correctPath(path: string) {
   path = path.replace(".", "/");
-  if (!path.startsWith("/")) path = "/" + path;
+  if (!path.startsWith("/")) {
+    path = "/" + path;
+  }
   return path;
 }
 function checkJsonFile(filePath: string) {
-  if (!fs.existsSync(path.dirname(filePath))) return;
-  if (!fs.existsSync(filePath)) fs.writeFileSync(filePath, "{}");
+  if (!fs.existsSync(path.dirname(filePath))) {
+    return;
+  }
+  if (!fs.existsSync(filePath)) {
+    // fs.writeFileSync(filePath, "{}");
+  }
   try {
-    if (fs.readFileSync(filePath).length == 0) fs.writeFileSync(filePath, "{}");
+    if (fs.readFileSync(filePath).length === 0) {
+      fs.writeFileSync(filePath, "{}");
+    }
   } catch (error) {}
 }

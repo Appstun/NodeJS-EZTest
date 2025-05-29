@@ -83,3 +83,9 @@ All _important_ changes to the extension "NodeJS-EZTest" are documented in this 
 
 - Updated README.md
 - Updated Icon
+
+## [1.1.0 & 1.1.1] - 2025-05-29
+
+### Added
+
+- Added Configuration Feature for "Start Testing"

@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
-import { StatusbarButtons } from "./statusbarButtons";
-import { Config, LaunchConfig } from "./config";
+import { LaunchConfig } from "./config";
 import { FileManager } from "./fileManager";
+import { StatusbarButtons } from "./statusbarButtons";
 
 export namespace VisibleTerminal {
   export let currentTerminal: vscode.Terminal | undefined = undefined;
@@ -44,9 +44,8 @@ export namespace VisibleTerminal {
     });
     currentTerminal.show();
 
-    //execute tsc if ts files are present
     let opts = await LaunchConfig.getOptions();
-    if (FileManager.filesCheck.typescript && FileManager.filesCheck.tsconfig) {
+    if (opts.compileCommand.trim().length > 0 && FileManager.filesCheck.typescript && FileManager.filesCheck.tsconfig) {
       currentTerminal.sendText(opts.compileCommand, true);
     }
     currentTerminal.sendText(`${opts.runtimeCommand} "${opts.indexFile}"`, true);

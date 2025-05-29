@@ -48,7 +48,7 @@ export namespace LaunchConfig {
     let data = await JsonDB.getValue<undefined, Partial<LaunchOptions>>(JsonDB.dataBases.lauConf, "/eztest", undefined);
 
     if (!data) {
-      JsonDB.setValue(JsonDB.dataBases.lauConf, "/eztest", defaultOptions);
+      JsonDB.setValue(JsonDB.dataBases.lauConf, "/startConfig", defaultOptions);
       return defaultOptions;
     }
 

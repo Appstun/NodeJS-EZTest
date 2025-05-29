@@ -48,12 +48,12 @@ NodeJS-EZTest is a VS Code extension that simplifies the testing of Node.js proj
 
 You can configure with which runtime you code gets run.
 
-Add this into the json root in `{workspace path}/.vscode/launch.json`:
+Add this into the json root in `{workspace path}/.vscode/eztest.json`:
 ```json
-"eztest": {
+"startConfig": {
    "indexFile": ".",          // Path to your code index file. (like './out/index.js')
    "runtimeCommand": "node",  // Command of a Javascript runtime (like 'node' or 'bun')
-   "compileCommand": "tsc"    // Command that gets executed before the runtime gets run command
+   "compileCommand": "tsc"    // Command that gets executed before the runtime gets run command. (You can set it to an empty string to ignore it.)
 }
 ```
 > By the way, if the file is not present, the extension will create automatically when you press the "start Testing" button.
