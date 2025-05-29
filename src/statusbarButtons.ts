@@ -12,6 +12,10 @@ export namespace StatusbarButtons {
 
   export async function updateStatusbar(disableButtons?: number | boolean) {
     //Disable buttons for a certain amount of time or enable them
+    if (FileManager.filesCheck === undefined) {
+      FileManager.filesCheck = await FileManager.checkFiles();
+    }
+
     if (disableButtons) {
       if (typeof disableButtons === "number") {
         disableButtonsMs(disableButtons);
