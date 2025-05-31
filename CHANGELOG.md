@@ -89,3 +89,9 @@ All _important_ changes to the extension "NodeJS-EZTest" are documented in this 
 ### Added
 
 - Added Configuration Feature for "Start Testing"
+
+## [1.1.2] - 2025-05-31
+
+### Changed
+
+- Fix: Changed old custom json path :facepalm:
