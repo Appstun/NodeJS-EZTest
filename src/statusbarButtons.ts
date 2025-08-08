@@ -20,7 +20,7 @@ export namespace StatusbarButtons {
       if (typeof disableButtons === "number") {
         disableButtonsMs(disableButtons);
       } else {
-        disableButtonsMs(100);
+        disableButtonsMs(400);
       }
     } else if (disableButtons === false) {
       enableButtons();
