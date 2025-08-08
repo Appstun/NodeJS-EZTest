@@ -1,6 +1,5 @@
+import { spawnSync } from "child_process";
 import * as vscode from "vscode";
-import { exec, spawnSync } from "child_process";
-import exp = require("constants");
 import { FileManager } from "./fileManager";
 import { MessageManager } from "./MessageManager";
 
@@ -44,7 +43,16 @@ export namespace Compiler {
     const lines = output.split("\n");
     const errors = lines
       .map((line) => {
-        const match = line.match(/(.*)\((\d+),(\d+)\): error (TS\d+): (.*)/);
+        const match = line.match(/(.*)\((\d+),(\d+)\): error (TS\d+): (.*)/) || line.match(/error (TS\d+): (.*)/);
+        if (match && match.length === 3) {
+          return {
+            file: "Unknown",
+            line: 0,
+            column: 0,
+            code: match[1],
+            message: match[2],
+          } as OutputInfo;
+        }
         if (match) {
           return {
             file: match[1],
@@ -69,10 +77,15 @@ export namespace Compiler {
       .map(
         (error) => `
         <div>
-          <strong>${error.code}</strong>: ${error.message}<br>
+          <strong>${error.code}</strong>: ${error.message}<br>${
+          error.file === "Unknown" && error.line === 0 && error.column === 0
+            ? ""
+            : `
           <a href="#" onclick="openFile('${error.file}', ${error.line}, ${error.column})" title="Go to file">
             <em>${error.file} (${error.line}:${error.column})</em>
           </a>
+          `
+        }
         </div>
       `
       )
@@ -113,7 +126,6 @@ export namespace Compiler {
 
     panel.webview.onDidReceiveMessage(
       (message) => {
-        console.log(message);
         if (message.command === "openFile") {
           const { file, line, column } = message;
           const openPath = vscode.Uri.file(`${rootPath}/${file}`);
