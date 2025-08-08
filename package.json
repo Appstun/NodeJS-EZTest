@@ -4,7 +4,7 @@
   "publisher": "Appstun",
   "description": "Enables testing of Node.js projects with just the click of a button.",
   "private": true,
-  "version": "1.1.2",
+  "version": "1.2.0",
   "icon": "/icons/icon.png",
   "repository": {
     "type": "git",
@@ -22,7 +22,26 @@
     "onLanguage:javascript"
   ],
   "main": "./out/extension.js",
-  "contributes": {},
+  "contributes": {
+    "configuration": {
+      "title": "NodeJS-EZTest",
+      "type": "object",
+      "properties": {
+        "nodejs-eztest.waitForCodeToFinish": {
+          "type": "boolean",
+          "default": true,
+          "description": "Wait for the code to finish before closing test terminal."
+        },
+        "nodejs-eztest.finishWaitTime": {
+          "type": "integer",
+          "default": 15,
+          "minimum": 2,
+          "maximum": 300,
+          "description": "Time in seconds to wait for code to finish before closing test terminal."
+        }
+      }
+    }
+  },
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
@@ -43,7 +62,7 @@
     "eslint": "^8.57.1",
     "glob": "^8.1.0",
     "mocha": "^10.8.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2"
   },
   "dependencies": {
     "minimatch": "^5.1.6",

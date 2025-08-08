@@ -95,3 +95,10 @@ All _important_ changes to the extension "NodeJS-EZTest" are documented in this 
 ### Changed
 
 - Fix: Changed old custom json path :facepalm:
+
+## [1.2.0] - 2025-08-08
+
+### Added
+
+- Added Waiting for code to finish (toggable with Setting `nodejs-eztest.waitForCodeToFinish`)
+- Added support for TS errors without a file specified in the error *(is more of a fix)*

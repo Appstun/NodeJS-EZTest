@@ -26,6 +26,7 @@ NodeJS-EZTest is a VS Code extension that simplifies the testing of Node.js proj
       <br>
 
 - Press the "restart Testing" button to reopen and restart the terminal.
+- By default, the extension waits for the code to finish. On the buttons "stop Testing" and "restart Testing" will appear "NOW" to abort the waiting and stop the code early.
 
 #### Compile Typescript files:
 
@@ -56,6 +57,15 @@ Add this into the json root in `{workspace path}/.vscode/eztest.json`:
    "compileCommand": "tsc"    // Command that gets executed before the runtime gets run command. (You can set it to an empty string to ignore it.)
 }
 ```
-> By the way, if the file is not present, the extension will create automatically when you press the "start Testing" button.
+> By the way, if the file is not present, the extension will create it automatically when you press the "start Testing" button.
+
+<br><br>
+
+# Settings
+
+By default, the extension will wait for the code to finish.
+This can be changed with the setting `nodejs-eztest.waitForCodeToFinish` (default: checked/on).
+
+It's also possible to change the wait time with `nodejs-eztest.finishWaitTime` in seconds (default: 15; min: 2; max: 300).
 
 [Appstun](https://github.com/appstun) - Developer
