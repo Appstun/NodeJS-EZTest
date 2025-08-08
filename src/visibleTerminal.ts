@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { LaunchConfig } from "./config";
 import { FileManager } from "./fileManager";
+import { MessageManager } from "./MessageManager";
 import { StatusbarButtons } from "./statusbarButtons";
 
 export namespace VisibleTerminal {
@@ -33,7 +34,7 @@ export namespace VisibleTerminal {
     }
 
     if (!FileManager.hasWorkspaceFolder()) {
-      vscode.window.showErrorMessage("No workspace folder found.");
+      MessageManager.showMessage({ type: "error", message: "No workspace folder found." });
       return;
     }
 

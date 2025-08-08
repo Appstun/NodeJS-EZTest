@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { exec, spawnSync } from "child_process";
 import exp = require("constants");
 import { FileManager } from "./fileManager";
+import { MessageManager } from "./MessageManager";
 
 export namespace Compiler {
   type OutputInfo = {
@@ -13,48 +14,30 @@ export namespace Compiler {
   };
 
   export async function compileTypescriptInWorkspace() {
-    return new Promise<void>((resolve) => {
-      const workspacePath = FileManager.getWorkspaceFolderPath();
-      if (!workspacePath) {
-        vscode.window.showErrorMessage("No workspace folder found.");
-        return;
-      }
+    const workspacePath = FileManager.getWorkspaceFolderPath();
+    if (!workspacePath) {
+      MessageManager.showMessage({ type: "error", message: "No workspace folder found." });
+      return;
+    }
 
-      let parsedOutput: OutputInfo[] = [];
-      let procInfo: any | undefined = undefined;
-      vscode.window.withProgress(
-        {
-          location: vscode.ProgressLocation.Notification,
-          title: "Compiling Typescript files...",
-          cancellable: false,
-        },
-        (progress, token) => {
-          let proc = spawnSync("tsc", { cwd: workspacePath, shell: true });
-          parsedOutput = parseTscOutput(proc.stdout.toString());
-          procInfo = { status: proc.status };
+    const prog = new MessageManager.ProgressMessage({ title: "Compiling Typescript files..." });
+    let proc = spawnSync("tsc", { cwd: workspacePath, shell: true });
+    const parsedOutput = parseTscOutput(proc.stdout.toString());
+    const procInfo = { status: proc.status };
+    prog.finish();
 
-          return new Promise<void>((resolve) => {
-            resolve();
-          });
-        }
-      );
+    if (procInfo.status !== 0 && parsedOutput.length === 0) {
+      MessageManager.showMessage({ type: "error", message: "There was an error while compiling. Is tsc/typescript installed?" });
+      return;
+    }
 
-      if (procInfo.status !== 0 && parsedOutput.length === 0) {
-        vscode.window.showErrorMessage("There was an error while compiling. Is tsc/typescript installed?");
-        resolve();
-        return;
-      }
+    if (parsedOutput.length > 0) {
+      MessageManager.showMessage({ type: "error", message: "Typescript compilation failed. Check the output for more information." });
+      showErrorsInWebview(parsedOutput, workspacePath);
+      return;
+    }
 
-      if (parsedOutput.length > 0) {
-        vscode.window.showErrorMessage("Typescript compilation failed. Check the output for more information.");
-        showErrorsInWebview(parsedOutput, workspacePath);
-        resolve();
-        return;
-      }
-
-      vscode.window.showInformationMessage("Typescript compilation finished");
-      resolve();
-    });
+    MessageManager.showMessage({ type: "info", message: "Typescript compilation finished" });
   }
 
   function parseTscOutput(output: string): OutputInfo[] {

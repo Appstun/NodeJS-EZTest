@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { FileManager } from "./fileManager";
 import { VisibleTerminal } from "./visibleTerminal";
+import { MessageManager } from "./MessageManager";
 import { StatusbarButtons } from "./statusbarButtons";
 import { Config } from "./config";
 import { Compiler } from "./compile";
@@ -13,7 +14,7 @@ export namespace Index {
   export function compileTS() {
     if (!VisibleTerminal.currentTerminal) {
       if (!FileManager.hasWorkspaceFolder()) {
-        vscode.window.showErrorMessage("No workspace folder found.");
+        MessageManager.showMessage({ type: "error", message: "No workspace folder found." });
         return;
       }
 
