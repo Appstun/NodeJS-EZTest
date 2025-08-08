@@ -1,15 +1,15 @@
 import * as vscode from "vscode";
+import { Compiler } from "./compile";
+import { Config } from "./config";
 import { FileManager } from "./fileManager";
-import { VisibleTerminal } from "./visibleTerminal";
 import { MessageManager } from "./MessageManager";
 import { StatusbarButtons } from "./statusbarButtons";
-import { Config } from "./config";
-import { Compiler } from "./compile";
-import { JsonDB } from "./jsonManager";
+import { VisibleTerminal } from "./visibleTerminal";
 
 export namespace Index {
   export let statusBarItems: vscode.StatusBarItem[] = [];
   export let statusbarPrioirty = 1000;
+  export let eventSubscriptions: vscode.Disposable[] = [];
 
   export function compileTS() {
     if (!VisibleTerminal.currentTerminal) {
@@ -22,8 +22,8 @@ export namespace Index {
       StatusbarButtons.updateStatusbar(true);
       statusBarItems[1].text = `$(loading~spin) ${Config.statusbarItemTexts.compileTs.text}`;
 
-      setTimeout(async () => {
-        await Compiler.compileTypescriptInWorkspace();
+      setTimeout(() => {
+        Compiler.compileTypescriptInWorkspace();
         StatusbarButtons.updateStatusbar(false);
       }, 100);
     }
@@ -31,6 +31,8 @@ export namespace Index {
 }
 
 export async function activate({ subscriptions }: vscode.ExtensionContext) {
+  Index.eventSubscriptions = subscriptions;
+
   //Create Buttons
   Index.statusBarItems.push(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, Index.statusbarPrioirty));
   Index.statusBarItems.push(
@@ -68,6 +70,14 @@ export async function activate({ subscriptions }: vscode.ExtensionContext) {
   );
   subscriptions.push(vscode.workspace.onDidChangeWorkspaceFolders(() => StatusbarButtons.updateStatusbar()));
   subscriptions.push(vscode.window.onDidChangeActiveTextEditor(() => StatusbarButtons.updateStatusbar()));
+  subscriptions.push(
+    vscode.window.onDidEndTerminalShellExecution((event) => {
+      VisibleTerminal.hasEnded = true;
+      if (event.terminal === VisibleTerminal.currentTerminal && VisibleTerminal.stopOnAbort) {
+        VisibleTerminal.onExecutionEnd("codeExit");
+      }
+    })
+  );
 
   //First File check and Statusbar update
   //+ File check every 60 seconds
@@ -75,5 +85,5 @@ export async function activate({ subscriptions }: vscode.ExtensionContext) {
 }
 
 export function deactivate() {
-  VisibleTerminal.stopTerminal();
+  VisibleTerminal.currentTerminal?.dispose();
 }

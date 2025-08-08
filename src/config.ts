@@ -1,10 +1,12 @@
+import * as vscode from "vscode";
 import { FileManager } from "./fileManager";
-import { Json, JsonDB } from "./jsonManager";
+import { JsonDB } from "./jsonManager";
 
 export namespace Config {
+  export const extensionId = "nodejs-eztest";
   export const commandNames = {
-    startStop: "nodejs-eztest.start_stop",
-    tscRestart: "nodejs-eztest.tsc_restart",
+    startStop: `${extensionId}.start_stop`,
+    tscRestart: `${extensionId}.tsc_restart`,
   };
   export const statusbarItemTexts = {
     startTest: {
@@ -14,10 +16,12 @@ export namespace Config {
     restartTest: {
       symbole: "refresh",
       text: "restart Testing",
+      extraWaitEnd: "NOW",
     },
     stopTest: {
       symbole: "stop",
       text: "stop Testing",
+      extraWaitEnd: "NOW",
     },
     compileTs: {
       symbole: "symbol-keyword",
@@ -61,5 +65,13 @@ export namespace LaunchConfig {
     }
 
     return data as LaunchOptions;
+  }
+}
+
+export namespace Settings {
+  type Settings = "waitForCodeToFinish" | "finishWaitTime";
+
+  export function getSetting<T>(setting: Settings): T | undefined {
+    return vscode.workspace.getConfiguration().get<T>(`${Config.extensionId}.${setting}`);
   }
 }
