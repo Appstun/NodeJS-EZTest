@@ -71,6 +71,10 @@ export namespace VisibleTerminal {
       return;
     }
 
+    if (currentTerminal.exitStatus !== undefined) {
+      onExecutionEnd(isRestart ? "any" : "normal");
+      return;
+    }
     if (stoppingProgress) {
       if (!isRestart) {
         executeOnNextEndFunctions = [];
