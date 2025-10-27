@@ -102,3 +102,12 @@ All _important_ changes to the extension "NodeJS-EZTest" are documented in this 
 
 - Added Waiting for code to finish (toggable with Setting `nodejs-eztest.waitForCodeToFinish`)
 - Added support for TS errors without a file specified in the error *(is more of a fix)*
+
+## [1.2.2] - 2025-10-27
+
+### Fixed
+
+- Extension not detecting deleted terminal correctly
+
+### Changed
+- Updated README.md
