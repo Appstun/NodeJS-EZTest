@@ -1,71 +1,62 @@
 # NodeJS-EZTest
 
-NodeJS-EZTest is a VS Code extension that simplifies the testing of Node.js projects. With just the click of a button, you can test your Node.js project _and track its progress in a console_.
+NodeJS-EZTest is a VS Code extension that simplifies testing Node.js projects. With a single click, you can run tests for your Node.js project and view the progress in a console.
 
 ## Features
 
-- Test your Node.js project with just one button click.
+- Run tests with a single button click.
 - Automatic compilation and execution of TypeScript files.
 - Support for executing JavaScript files.
 - Output to a dedicated console.
-- Convenient starting and stopping of code.
-- Compiling TypeScript files without executing the code.
-- Error document when a compilation fails.
-    <br><br>
-- For the button to be displayed, there must be the folder `node_modules` and TypeScript/JavaScript files in the current workspace.
+- Easy start and stop of the running code.
+- Compile TypeScript files without executing them.
+- Display an error document when compilation fails.
+
+For the buttons to be shown, the workspace must contain a `node_modules` folder and TypeScript or JavaScript files.
 
 ## Usage
 
 #### Start testing:
 
-1. Open your Node.js project in VS Code. <br>
-2. A "start Testing" button is displayed in the status bar. <br>
-3. Click on the button to open a new console and execute the code <br>
-      The process is displayed in the console. <br>
-4. Click on the button again to stop the code and close the terminal. <br>
-      <br>
+1. Open your Node.js project in VS Code.
+2. A "Start Testing" button appears in the status bar.
+3. Click the button to open a new console and run your code.
+4. Click the button again to stop the running code and close the terminal.
 
-- Press the "restart Testing" button to reopen and restart the terminal.
-- By default, the extension waits for the code to finish. On the buttons "stop Testing" and "restart Testing" will appear "NOW" to abort the waiting and stop the code early.
+- Press the "Restart Testing" button to reopen and restart the terminal.
+- By default, the extension waits for the code to finish. The "Stop Testing" and "Restart Testing" buttons will display "NOW" to abort the waiting period and stop the code immediately.
 
-#### Compile Typescript files:
+#### Compile TypeScript files:
 
-1. Open your Node.js project with TypeScript files in VS Code. <br>
-2. A "compile TS" button is displayed in the status bar. <br>
-3. Click on the button to compile the TypeScript files to JavaScript files. <br>
-4. Wait a bit and stare at the spinning loading symbol.
-5. When the symbol of the button has changed, the compilation failed or finished.
+1. Open your Node.js project that contains TypeScript files in VS Code.
+2. A "Compile TS" button appears in the status bar.
+3. Click the button to compile the TypeScript files to JavaScript.
+4. Wait briefly while compilation runs.
+5. When the button's icon changes, compilation has finished or failed.
 
-   > If the compilation fails, a document will be displayed with error points.
+> If compilation fails, an error document listing the issues will open.
 
-<br>
-<br>
+- The "Compile TS" button is shown only if TypeScript files and a `tsconfig.json` file are present, and no test is currently running.
 
-- The "Compile TS" button is only displayed if TypeScript files and the `tsconfig.json` file are present, and no test is currently running.
+## Configuration
 
-<br><br>
+You can configure which runtime your code uses.
 
-# Configuration
-
-You can configure with which runtime you code gets run.
-
-Add this into the json root in `{workspace path}/.vscode/eztest.json`:
+Add this to the JSON root in `{workspace path}/.vscode/eztest.json`:
 ```json
 "startConfig": {
-   "indexFile": ".",          // Path to your code index file. (like './out/index.js')
-   "runtimeCommand": "node",  // Command of a Javascript runtime (like 'node' or 'bun')
-   "compileCommand": "tsc"    // Command that gets executed before the runtime gets run command. (You can set it to an empty string to ignore it.)
+   "indexFile": ".",          // Path to your entry file (e.g. "./out/index.js")
+   "runtimeCommand": "node",  // Command of a JavaScript runtime (e.g. "node" or "bun")
+   "compileCommand": "tsc"    // Command executed before running the runtime. Set to "" to skip compilation.
 }
 ```
-> By the way, if the file is not present, the extension will create it automatically when you press the "start Testing" button.
 
-<br><br>
+If the file does not exist, the extension will create it automatically when you press the "Start Testing" button.
 
-# Settings
+## Settings
 
-By default, the extension will wait for the code to finish.
-This can be changed with the setting `nodejs-eztest.waitForCodeToFinish` (default: checked/on).
+By default, the extension waits for the code to finish. This can be changed with the setting `nodejs-eztest.waitForCodeToFinish` (default: true).
 
-It's also possible to change the wait time with `nodejs-eztest.finishWaitTime` in seconds (default: 15; min: 2; max: 300).
+You can also change the wait time with `nodejs-eztest.finishWaitTime` in seconds (default: 15; min: 2; max: 300).
 
 [Appstun](https://github.com/appstun) - Developer
