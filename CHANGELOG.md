@@ -111,3 +111,8 @@ All _important_ changes to the extension "NodeJS-EZTest" are documented in this 
 
 ### Changed
 - Updated README.md
+
+## [1.2.3] - 2026-03-25
+
+### Fixed
+- Vurnabilities in dependencies
